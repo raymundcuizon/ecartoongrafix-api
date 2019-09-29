@@ -8,6 +8,7 @@ const publicRoutes = {
   'GET  /faq' : 'FaqController.getlist',
 
   'GET  /process' : 'ProcessController.getlist',
+  'GET  /process/:slug' : 'ProcessController.getSingle',
 
 
 };

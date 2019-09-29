@@ -31,6 +31,11 @@ const Process = sequelize.define('Process', {
       unique: true,
       allowNull: false
    },
+  slug : {
+      type :  Sequelize.STRING,
+      unique: true,
+      allowNull: false
+   },
   description: {
       type: Sequelize.TEXT,
       allowNull: false

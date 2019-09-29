@@ -10,14 +10,48 @@ const fs = require('fs-extra');
 const random = require('random-string-generator');
 const _ = require('underscore');
 const lodash = require('lodash');
+const slugify = require('slugify')
+
 
 const ProcessController = () => {
+
+	const getSingle = async (req, res) => {
+
+		try {
+
+			const { slug } = req.params;
+
+			const proc = await Process.findOne({
+            where: {
+                slug
+            },
+						attributes: ['id','slug','name','description']
+          });
+
+      if(!proc) {
+      		return res.status(400).json({ msg: 'Bad Request: Model not found' });
+      }
+
+
+			let images = await sequelize.query("SELECT ps.step, images.title, images.description,\
+					concat(images.folder_name ,'/', images.filename) as img_url \
+					FROM process_steps as ps LEFT JOIN images ON ps.image_id = images.id\
+					where ps.status = 1 AND ps.deleted = 0 AND ps.process_id = ? order by ps.step",
+        	{replacements: [ proc.id ],type: sequelize.QueryTypes.SELECT });
+
+			return res.status(HTTPStatus.OK).json( { proccess: proc, images } );
+		} catch (err) {
+			return res.status(HTTPStatus.BAD_REQUEST).json({ msg: 'invalid request' });
+
+		}
+
+	}
 
 	const getlist = async (req, res, next) => {
 		try {
 
-			let images = await sequelize.query('select id, title, description, CONCAT("images/process/",folder_name, "/", filename) as img_url\
-			from images where category = 1 AND deleted = 0 AND status = 1',
+			let images = await sequelize.query("SELECT process.slug, process.name, process.description, concat(images.folder_name ,'/', images.filename) as img_url \
+				FROM process LEFT JOIN images ON process.banner = images.id",
         {type: sequelize.QueryTypes.SELECT });
 
 			console.log(images)
@@ -112,27 +146,28 @@ const ProcessController = () => {
 					return res.status(HTTPStatus.BAD_REQUEST).json({ msg : 'No files were uploaded.'});
 				}
 
-				let data = {
-					title: null
-					, description: null
-					, filename: file_name
-					, folder_name: folder_name
-					, category: 1
-				}
-
-				const image = await Images.create(data, { transaction });
-
-				await Process.create({
-					banner: image.id,
-					name: body.name,
-					description: body.description
-				}, {
-					transaction
-				});
-
-				await transaction.commit();
-
 			});
+
+			let data = {
+				title: null
+				, description: null
+				, filename: file_name
+				, folder_name: folder_name
+				, category: 1
+			}
+
+			const image = await Images.create(data, { transaction });
+
+			await Process.create({
+				banner: image.id,
+				slug: slugify(body.name).toLowerCase(),
+				name: body.name,
+				description: body.description
+			}, {
+				transaction
+			});
+
+			await transaction.commit();
 
 			return res.status(HTTPStatus.CREATED).json({ msg : 'successfully created' });
 
@@ -197,7 +232,7 @@ const ProcessController = () => {
 
 							const img = await Images.create(data);
 							await ProcessSteps.create({
-								process_id : 1,
+								process_id : body.process_id,
 								image_id: img.id,
 								step : step
 							});
@@ -213,18 +248,18 @@ const ProcessController = () => {
 
 		} catch (e) {
 			console.log(e)
-			if (transaction) await transaction.rollback();
-
 			return res.status(HTTPStatus.BAD_REQUEST).json(e);
 		}
 	}
 
 	return {
+		getSingle,
 		getlist,
 		create,
 		createStep
 
 	}
+
 }
 
 
