@@ -72,7 +72,7 @@ const ImageController = () => {
 
 					if (index === array.length -1){
               resolve();
-            }
+          }
 				})
 			});
 

@@ -10,6 +10,10 @@ const publicRoutes = {
   'GET  /process' : 'ProcessController.getlist',
   'GET  /process/:slug' : 'ProcessController.getSingle',
 
+  'GET  /portfolio' : 'PortfolioController.getlist',
+  'GET  /portfolio/artwork/:slug' : 'PortfolioController.getArtworks',
+
+  'POST /inquiry': 'InquiryController.create',
 
 };
 

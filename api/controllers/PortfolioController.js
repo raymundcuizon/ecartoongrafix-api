@@ -1,6 +1,8 @@
 const HTTPStatus = require('http-status');
 const Images = require('../models/Images');
 const Process = require('../models/Process');
+const Portfolio = require('../models/Portfolio');
+const PortfolioImages = require('../models/PortfolioImages');
 const ProcessSteps = require('../models/ProcessSteps');
 
 const { Op } = require('sequelize');
@@ -13,33 +15,33 @@ const lodash = require('lodash');
 const slugify = require('slugify')
 
 
-const ProcessController = () => {
+const PortfolioController = () => {
 
-	const getSingle = async (req, res) => {
+	const getArtworks = async (req, res) => {
 
 		try {
 
 			const { slug } = req.params;
 
-			const proc = await Process.findOne({
+			const portfolio = await Portfolio.findOne({
             where: {
                 slug
             },
 						attributes: ['id','slug','name','description']
           });
 
-      if(!proc) {
+      if(!portfolio) {
       		return res.status(400).json({ msg: 'Bad Request: Model not found' });
       }
 
 
-			let images = await sequelize.query("SELECT ps.step, images.title, images.description,\
+			let images = await sequelize.query("SELECT images.description,\
 					concat(images.folder_name ,'/', images.filename) as img_url \
-					FROM process_steps as ps LEFT JOIN images ON ps.image_id = images.id\
-					where ps.status = 1 AND ps.deleted = 0 AND ps.process_id = ? order by ps.step",
-        	{replacements: [ proc.id ],type: sequelize.QueryTypes.SELECT });
+					FROM portfolio_images as ps LEFT JOIN images ON ps.image_id = images.id\
+					where ps.status = 1 AND ps.deleted = 0 AND ps.portfolio_id = ? order by images.title",
+        	{replacements: [ portfolio.id ],type: sequelize.QueryTypes.SELECT });
 
-			return res.status(HTTPStatus.OK).json( { proccess: proc, images } );
+			return res.status(HTTPStatus.OK).json( { portfolio_details: portfolio, images } );
 		} catch (err) {
 			return res.status(HTTPStatus.BAD_REQUEST).json({ msg: 'invalid request' });
 
@@ -50,9 +52,9 @@ const ProcessController = () => {
 	const getlist = async (req, res, next) => {
 		try {
 
-			let images = await sequelize.query("SELECT process.slug, process.name, process.description,\
+			let images = await sequelize.query("SELECT portfolio.slug, portfolio.name, portfolio.description,\
 			 	concat(images.folder_name ,'/', images.filename) as img_url \
-				FROM process LEFT JOIN images ON process.banner = images.id",
+				FROM portfolio LEFT JOIN images ON portfolio.thumbnail = images.id",
         {type: sequelize.QueryTypes.SELECT });
 
 			return res.status(HTTPStatus.OK).json( { images } );
@@ -60,63 +62,6 @@ const ProcessController = () => {
 			err.status = HTTPStatus.BAD_REQUEST;
 		    return next(err);
 		}
-	};
-
-	const create_test = async (req, res, next) => {
-
-		try {
-
-			const { body, files } = req;
-
-			if (!files || Object.keys(files).length === 0) {
-				return res.status(HTTPStatus.BAD_REQUEST).json({ msg : 'No files were uploaded.'});
-		  }
-
-			var counter = 1;
-			let folder_name = random();
-
-			let dir = './assets/images/process/'+ folder_name;
-			fs.ensureDirSync(dir, { mode: 0o2775 });
-
-      var result = new Promise((resolve, reject) => {
-
-				Object.keys(files).forEach(function(value, index, array) {
-
-					let split_mimetype = files[value].mimetype.split('/');
-					let file_name = random() + '.' + split_mimetype[1]
-
-					files[value].mv(dir + '/' + file_name, async function (err) {
-						if (err){
-							return res.status(HTTPStatus.BAD_REQUEST).json({ msg : 'No files were uploaded.'});
-						}
-
-						let data = {
-							title: body.title[counter]
-							, description: body.description[counter]
-							, filename: file_name
-							, folder_name: folder_name
-							, category: 1
-						}
-
-						await Images.create(data, { transaction });
-
-					});
-
-					if (index === array.length -1){
-              resolve();
-            }
-				})
-			});
-
-			result.then(() => {
-  			return res.status(HTTPStatus.CREATED).json({ msg : 'successfully created' });
-		 });
-
-		} catch (e) {
-			console.log(e)
-			return res.status(HTTPStatus.BAD_REQUEST).json(e);
-		}
-
 	};
 
 	const create = async (req, res) => {
@@ -127,21 +72,22 @@ const ProcessController = () => {
 
 			const { body, files } = req;
 
-
 			if (!files || Object.keys(files).length === 0) {
 				return res.status(HTTPStatus.BAD_REQUEST).json({ msg : 'No files were uploaded.'});
 			}
+
 			transaction = await sequelize.transaction();
 
 			let folder_name = random();
 
-			let dir = './assets/images/process/'+ folder_name;
+			let dir = './assets/images/portfolio/'+ folder_name;
 			fs.ensureDirSync(dir, { mode: 0o2775 });
 
-			let split_mimetype = files.banner.mimetype.split('/');
-			let file_name = random() + '.' + split_mimetype[1]
+			// banner
+			let split_mimetype = files.thumbnail.mimetype.split('/');
+			let file_name = 'banner_'+ random() + '.' + split_mimetype[1]
 
-			files.banner.mv(dir + '/' + file_name, async function (err) {
+			files.thumbnail.mv(dir + '/' + file_name, async function (err) {
 				if (err){
 					return res.status(HTTPStatus.BAD_REQUEST).json({ msg : 'No files were uploaded.'});
 				}
@@ -158,11 +104,11 @@ const ProcessController = () => {
 
 			const image = await Images.create(data, { transaction });
 
-			await Process.create({
-				banner: image.id,
-				slug: slugify(body.name).toLowerCase(),
+			await Portfolio.create({
 				name: body.name,
-				description: body.description
+				slug: slugify(body.name).toLowerCase(),
+				description: body.description,
+				thumbnail: image.id,
 			}, {
 				transaction
 			});
@@ -172,7 +118,7 @@ const ProcessController = () => {
 			return res.status(HTTPStatus.CREATED).json({ msg : 'successfully created' });
 
 		} catch (e) {
-
+			console.log(e);
 			if (transaction) await transaction.rollback();
 			return res.status(HTTPStatus.BAD_REQUEST).json(e);
 
@@ -180,12 +126,12 @@ const ProcessController = () => {
 
 	};
 
-	const createStep = async (req, res) => {
+	const createArtwork = async (req, res) => {
 
 		try {
 
 			const { body, files } = req;
-
+			// return console.log(files);
 			if (!files || Object.keys(files).length === 0) {
 				return res.status(HTTPStatus.BAD_REQUEST).json({ msg : 'No files were uploaded.'});
 		  }
@@ -193,8 +139,8 @@ const ProcessController = () => {
 			var steps_data = [];
 			var counter = 0;
 
-			let folder_name = random();
-			let dir = './assets/images/process/'+ folder_name;
+			let folder_name = 'artwork_'  + random();
+			let dir = './assets/images/portfolio/'+ folder_name;
 			fs.ensureDirSync(dir, { mode: 0o2775 });
 
 			var result = new Promise( (resolve, reject) => {
@@ -205,14 +151,7 @@ const ProcessController = () => {
             let x = 'desc_'+counter;
             return k == x
           });
-					let title = _.find(body, function(v,k, array) {
-            let x = 'title_'+counter;
-            return k == x
-          });
-					let step = _.find(body, function(v,k, array) {
-            let x = 'step_'+counter;
-            return k == x
-          });
+
 					let split_mimetype = files[value].mimetype.split('/');
 					let file_name = random() + '.' + split_mimetype[1];
 
@@ -223,24 +162,25 @@ const ProcessController = () => {
 							}
 
 							let data = {
-								title: title
+								title: null
 								, description: desc
 								, filename: file_name
 								, folder_name: folder_name
-								, category: 2
+								, category: 3
 							}
 
 							const img = await Images.create(data);
-							await ProcessSteps.create({
-								process_id : body.process_id,
-								image_id: img.id,
-								step : step
+
+							await PortfolioImages.create({
+								portfolio_id : body.portfolio_id,
+								image_id: img.id
 							});
 					});
 					if (index === array.length -1){
             resolve();
           }
 				});
+
 			});
 			result.then(() => {
 				return res.status(HTTPStatus.CREATED).json({ msg : 'successfully created' });
@@ -253,14 +193,14 @@ const ProcessController = () => {
 	}
 
 	return {
-		getSingle,
+		getArtworks,
 		getlist,
 		create,
-		createStep
+		createArtwork
 	}
 
 }
 
 
 
-module.exports = ProcessController;
+module.exports = PortfolioController;

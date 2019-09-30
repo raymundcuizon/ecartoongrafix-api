@@ -13,37 +13,32 @@ const hooks = {
   }
 };
 
-const tableName = 'portfolio';
+const tableName = 'portfolio_images';
 
-const Portfolio = sequelize.define('Portfolio', {
+const PortfolioImages = sequelize.define('PortfolioImages', {
   id : {
       type :  Sequelize.INTEGER,
       unique: true,
       primaryKey: true,
       autoIncrement: true
   },
-  name : {
-      type :  Sequelize.STRING,
-      unique: true,
+  portfolio_id : {
+      type :  Sequelize.INTEGER,
       allowNull: false
   },
-  slug : {
-      type :  Sequelize.STRING,
-      unique: true,
+  image_id : {
+      type :  Sequelize.INTEGER,
       allowNull: false
-  },
-  description: {
-      type: Sequelize.TEXT,
-      allowNull: false
-  },
-  thumbnail: {
-      type: Sequelize.INTEGER,
-      allowNull: false
-  },
+   },
   status: {
       type: Sequelize.BOOLEAN,
       allowNull: false,
       defaultValue: true
+  },
+  deleted: {
+      type: Sequelize.BOOLEAN,
+      allowNull: false,
+      defaultValue: false
   },
   created_at : {
       type :  Sequelize.DATE
@@ -54,9 +49,9 @@ const Portfolio = sequelize.define('Portfolio', {
 }, { hooks, tableName });
 
 // eslint-disable-next-line
-Portfolio.prototype.toJSON = function () {
+PortfolioImages.prototype.toJSON = function () {
   const values = Object.assign({}, this.get());
   return values;
 };
 
-module.exports = Portfolio;
+module.exports = PortfolioImages;
