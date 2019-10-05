@@ -15,6 +15,10 @@ const privateRoutes = {
   'GET /inquiries': 'InquiryController.getlist',
   'GET /inquiry/:id': 'InquiryController.get',
 
+  'PATCH /about': 'AboutController.update',
+
+  'PATCH /service': 'ServicesController.update',
+
 };
 
 module.exports = privateRoutes;
