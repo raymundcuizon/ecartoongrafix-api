@@ -13,6 +13,8 @@ const slugify = require('slugify')
 
 const random = require('random-string-generator');
 const { Op } = require('sequelize');
+var empty = require('is-empty');
+
 
 const InquiryController = () => {
 
@@ -134,10 +136,39 @@ const InquiryController = () => {
 
 	};
 
+	const get = async (req, res, next) => {
+		try {
+
+			const { id } = req.params;
+
+			const data = await ContactUs.findOne({
+				where: {
+					id,
+				},
+			});
+
+	 		if(empty(data)) {
+	 			return res.status(HTTPStatus.BAD_REQUEST).json({ msg : 'Model not found'});
+	 		}
+
+			var image = [];
+			if(data.reference_photos){
+				image = await sequelize.query('select CONCAT("contact_us/", folder_name, "/", filename) as img_url from images where status = 1 AND id in ' + data.reference_photos,
+		      { replacements: [], type: sequelize.QueryTypes.SELECT });
+			}
+
+			return res.status(HTTPStatus.OK).json({data, image});
+
+		} catch (err) {
+			err.status = HTTPStatus.BAD_REQUEST;
+				return next(err);
+		}
+	};
 
 	return {
 		getlist,
-		create
+		create,
+		get
 	}
 }
 

@@ -13,6 +13,7 @@ const privateRoutes = {
   'GET /portfolio/artwork/:slug': 'PortfolioController.getArtworks',
 
   'GET /inquiries': 'InquiryController.getlist',
+  'GET /inquiry/:id': 'InquiryController.get',
 
 };
 
