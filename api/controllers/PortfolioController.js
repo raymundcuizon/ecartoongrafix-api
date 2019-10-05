@@ -4,6 +4,7 @@ const Process = require('../models/Process');
 const Portfolio = require('../models/Portfolio');
 const PortfolioImages = require('../models/PortfolioImages');
 const ProcessSteps = require('../models/ProcessSteps');
+const Sequelize = require('sequelize');
 
 const { Op } = require('sequelize');
 const sequelize = require('../../config/database');
@@ -13,7 +14,6 @@ const random = require('random-string-generator');
 const _ = require('underscore');
 const lodash = require('lodash');
 const slugify = require('slugify')
-
 
 const PortfolioController = () => {
 
@@ -50,14 +50,40 @@ const PortfolioController = () => {
 	}
 
 	const getlist = async (req, res, next) => {
+
 		try {
 
-			let images = await sequelize.query("SELECT portfolio.slug, portfolio.name, portfolio.description,\
-			 	concat(images.folder_name ,'/', images.filename) as img_url \
-				FROM portfolio LEFT JOIN images ON portfolio.thumbnail = images.id",
-        {type: sequelize.QueryTypes.SELECT });
+			const { page , paginate } = req.query;
+			// let page = 1;
+			// let paginate = 10;
 
-			return res.status(HTTPStatus.OK).json( { images } );
+			Portfolio.belongsTo(Images, {
+				 foreignKey: 'thumbnail',
+			 })
+
+			const options = {
+          page: +page, // Default 1
+          paginate: +paginate, // Default 25
+					attributes: [
+						'id', 'name','slug', 'description', 'status'
+					],
+					include: [
+						{
+							model: Images,
+							attributes: [
+								[Sequelize.fn("concat", Sequelize.col("folder_name"),'/',Sequelize.col("filename")), 'img_url']
+							],
+							required: false
+						}
+					]
+        }
+			const { docs, pages, total } = await Portfolio.paginate(options)
+			var before = page > 1 ? +page - 1 : 1;
+			var next   = page < total ? +page + 1 : total;
+
+			return res.status(HTTPStatus.OK).json( {
+				"data_list" : docs , 'pagination' : { pages, total, before, next }
+			} );
 		} catch (err) {
 			err.status = HTTPStatus.BAD_REQUEST;
 		    return next(err);

@@ -9,6 +9,8 @@ const privateRoutes = {
   'POST /portfolio' : 'PortfolioController.create',
   'POST /portfolio/artwork' : 'PortfolioController.createArtwork',
 
+  'GET  /portfolio' : 'PortfolioController.getlist',
+  'GET  /portfolio/artwork/:slug' : 'PortfolioController.getArtworks',
 
 };
 

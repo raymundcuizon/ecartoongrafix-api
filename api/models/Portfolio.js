@@ -2,6 +2,8 @@ const Sequelize = require('sequelize');
 const bcryptService = require('../services/bcrypt.service');
 
 const sequelize = require('../../config/database');
+const sequelizePaginate = require('sequelize-paginate')
+
 
 const hooks = {
   beforeCreate(d) {
@@ -54,6 +56,8 @@ const Portfolio = sequelize.define('Portfolio', {
 }, { hooks, tableName });
 
 // eslint-disable-next-line
+sequelizePaginate.paginate(Portfolio)
+
 Portfolio.prototype.toJSON = function () {
   const values = Object.assign({}, this.get());
   return values;
