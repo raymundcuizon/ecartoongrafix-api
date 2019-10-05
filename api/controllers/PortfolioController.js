@@ -15,6 +15,8 @@ const _ = require('underscore');
 const lodash = require('lodash');
 const slugify = require('slugify')
 
+const image_file_path  = require('../../config/constant')
+
 const PortfolioController = () => {
 
 	const getArtworks = async (req, res) => {
@@ -22,6 +24,7 @@ const PortfolioController = () => {
 		try {
 
 			const { slug } = req.params;
+			const { page , paginate } = req.query;
 
 			const portfolio = await Portfolio.findOne({
             where: {
@@ -35,14 +38,46 @@ const PortfolioController = () => {
       }
 
 
-			let images = await sequelize.query("SELECT images.description,\
-					concat(images.folder_name ,'/', images.filename) as img_url \
-					FROM portfolio_images as ps LEFT JOIN images ON ps.image_id = images.id\
-					where ps.status = 1 AND ps.deleted = 0 AND ps.portfolio_id = ? order by images.title",
-        	{replacements: [ portfolio.id ],type: sequelize.QueryTypes.SELECT });
+			//
+			//
+			// let images = await sequelize.query("SELECT images.description,\
+			// 		concat(images.folder_name ,'/', images.filename) as img_url \
+			// 		FROM portfolio_images as ps LEFT JOIN images ON ps.image_id = images.id\
+			// 		where ps.status = 1 AND ps.deleted = 0 AND ps.portfolio_id = ? order by images.title",
+      //   	{replacements: [ portfolio.id ],type: sequelize.QueryTypes.SELECT });
+			PortfolioImages.belongsTo(Images, {
+				foreignKey: 'image_id'
+			});
 
-			return res.status(HTTPStatus.OK).json( { portfolio_details: portfolio, images } );
+			const options = {
+					page: +page, // Default 1
+					paginate: +paginate, // Default 25
+					attributes: [ 'id', 'image_id' ],
+					include: [
+						{
+							model: Images,
+							attributes: [
+								'title',
+								'description',
+								'id',
+								[ Sequelize.fn("concat", 'portfolio/',  Sequelize.col("folder_name"),'/',Sequelize.col("filename")), 'img_url' ]
+							],
+							required: false
+						}
+					]
+			}
+
+			const { docs, pages, total } = await PortfolioImages.paginate(options)
+			var before = page > 1 ? +page - 1 : 1;
+			var next   = page < total ? +page + 1 : total;
+
+			return res.status(HTTPStatus.OK).json( {
+				"data_list" : docs , 'pagination' : { pages, total, before, next }
+			} )
+
+			// return res.status(HTTPStatus.OK).json( { portfolio_details: portfolio, images } );
 		} catch (err) {
+			console.log(err)
 			return res.status(HTTPStatus.BAD_REQUEST).json({ msg: 'invalid request' });
 
 		}
@@ -54,8 +89,6 @@ const PortfolioController = () => {
 		try {
 
 			const { page , paginate } = req.query;
-			// let page = 1;
-			// let paginate = 10;
 
 			Portfolio.belongsTo(Images, {
 				 foreignKey: 'thumbnail',
@@ -71,12 +104,13 @@ const PortfolioController = () => {
 						{
 							model: Images,
 							attributes: [
-								[Sequelize.fn("concat", Sequelize.col("folder_name"),'/',Sequelize.col("filename")), 'img_url']
+								[ Sequelize.fn("concat", 'portfolio/',  Sequelize.col("folder_name"),'/',Sequelize.col("filename")), 'img_url' ]
 							],
 							required: false
 						}
 					]
         }
+
 			const { docs, pages, total } = await Portfolio.paginate(options)
 			var before = page > 1 ? +page - 1 : 1;
 			var next   = page < total ? +page + 1 : total;
@@ -85,8 +119,8 @@ const PortfolioController = () => {
 				"data_list" : docs , 'pagination' : { pages, total, before, next }
 			} );
 		} catch (err) {
-			err.status = HTTPStatus.BAD_REQUEST;
-		    return next(err);
+			return res.status(HTTPStatus.BAD_REQUEST).json({ msg : err});
+
 		}
 	};
 
