@@ -2,6 +2,7 @@ const Sequelize = require('sequelize');
 const bcryptService = require('../services/bcrypt.service');
 
 const sequelize = require('../../config/database');
+const sequelizePaginate = require('sequelize-paginate');
 
 const hooks = {
   beforeCreate(d) {
@@ -89,6 +90,8 @@ const ContactUs = sequelize.define('contact_us', {
       type :  Sequelize.DATE
   },
 }, { hooks, tableName });
+
+sequelizePaginate.paginate(ContactUs)
 
 // eslint-disable-next-line
 ContactUs.prototype.toJSON = function () {

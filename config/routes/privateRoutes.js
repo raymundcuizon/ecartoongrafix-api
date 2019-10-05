@@ -11,6 +11,9 @@ const privateRoutes = {
 
   'GET /portfolio': 'PortfolioController.getlist',
   'GET /portfolio/artwork/:slug': 'PortfolioController.getArtworks',
+
+  'GET /inquiries': 'InquiryController.getlist',
+
 };
 
 module.exports = privateRoutes;
