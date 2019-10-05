@@ -5,13 +5,13 @@ const publicRoutes = {
   'POST /validate': 'UserController.validate',
 
   // Faq
-  'GET  /faq' : 'FaqController.getlist',
+  'GET /faq': 'FaqController.getlist',
 
-  'GET  /process' : 'ProcessController.getlist',
-  'GET  /process/:slug' : 'ProcessController.getSingle',
+  'GET /process': 'ProcessController.getlist',
+  'GET /process/:slug': 'ProcessController.getSingle',
 
-  'GET  /portfolio' : 'PortfolioController.getlist',
-  'GET  /portfolio/artwork/:slug' : 'PortfolioController.getArtworks',
+  'GET /portfolio': 'PortfolioController.getlist',
+  'GET /portfolio/artwork/:slug': 'PortfolioController.getArtworks',
 
   'POST /inquiry': 'InquiryController.create',
 
