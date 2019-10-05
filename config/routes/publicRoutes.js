@@ -13,6 +13,9 @@ const publicRoutes = {
   'GET /portfolio': 'PortfolioController.getlist',
   'GET /portfolio/artwork/:slug': 'PortfolioController.getArtworks',
 
+  'GET /about': 'AboutController.getlist',
+  'GET /service': 'ServicesController.getlist',
+
   'POST /inquiry': 'InquiryController.create',
 
 };
