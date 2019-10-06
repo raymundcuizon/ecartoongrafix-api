@@ -13,7 +13,7 @@ const ServicesController = () => {
 		try {
 
 			const data = await Services.findOne({
-				attributes: ['description']
+				attributes: ['id', 'description']
 			});
 
 			return res.status(HTTPStatus.OK).json(data);

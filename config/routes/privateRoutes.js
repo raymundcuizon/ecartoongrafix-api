@@ -2,6 +2,9 @@ const privateRoutes = {
   'GET /users': 'UserController.getAll',
 
   'POST /faq': 'FaqController.create',
+  'DELETE /faq/:id': 'FaqController.destroy',
+  'PATCH /faq/:id': 'FaqController.update',
+  'PATCH /faq/visibility/:id': 'FaqController.visibility',
 
   'POST /process': 'ProcessController.create',
   'POST /process/step': 'ProcessController.createStep',
@@ -16,7 +19,6 @@ const privateRoutes = {
   'GET /inquiry/:id': 'InquiryController.get',
 
   'PATCH /about': 'AboutController.update',
-
   'PATCH /service': 'ServicesController.update',
 
 };

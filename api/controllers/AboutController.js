@@ -13,7 +13,7 @@ const AboutController = () => {
 		try {
 
 			const data = await About.findOne({
-				attributes: ['description']
+				attributes: ['id', 'description']
 			});
 			return res.status(HTTPStatus.OK).json(data);
 
