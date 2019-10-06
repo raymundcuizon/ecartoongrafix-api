@@ -107,7 +107,7 @@ const FaqController = () => {
 			faq.update({ status });
 
 			return res.status(HTTPStatus.OK).json({ msg : 'successfully updated visibility'});
-			
+
 		} catch (e) {
 			return res.status(HTTPStatus.BAD_REQUEST).json(e);
 
