@@ -37,14 +37,6 @@ const PortfolioController = () => {
       		return res.status(400).json({ msg: 'Bad Request: Model not found' });
       }
 
-
-			//
-			//
-			// let images = await sequelize.query("SELECT images.description,\
-			// 		concat(images.folder_name ,'/', images.filename) as img_url \
-			// 		FROM portfolio_images as ps LEFT JOIN images ON ps.image_id = images.id\
-			// 		where ps.status = 1 AND ps.deleted = 0 AND ps.portfolio_id = ? order by images.title",
-      //   	{replacements: [ portfolio.id ],type: sequelize.QueryTypes.SELECT });
 			PortfolioImages.belongsTo(Images, {
 				foreignKey: 'image_id'
 			});
@@ -100,9 +92,13 @@ const PortfolioController = () => {
 					attributes: [
 						'id', 'name','slug', 'description', 'status'
 					],
+					order: [
+						['created_at', 'DESC']
+					],
 					include: [
 						{
 							model: Images,
+							litmi: 1,
 							attributes: [
 								[ Sequelize.fn("concat", 'portfolio/',  Sequelize.col("folder_name"),'/',Sequelize.col("filename")), 'img_url' ]
 							],
@@ -115,9 +111,31 @@ const PortfolioController = () => {
 			var before = page > 1 ? +page - 1 : 1;
 			var next   = page < total ? +page + 1 : total;
 
-			return res.status(HTTPStatus.OK).json( {
-				"data_list" : docs , 'pagination' : { pages, total, before, next }
-			} );
+			var docs_data = [];
+
+			var prom = new Promise( (resolve, reject) => {
+					docs.forEach((value, index, array) => {
+
+						docs_data.push({
+							id: value.id,
+							name: value.name,
+							description: value.description,
+							status: value.status,
+							img_url: value.Image.dataValues.img_url
+						})
+
+						if(index === array.length -1) {
+							resolve()
+						}
+					})
+			});
+
+			prom.then(() => {
+				return res.status(HTTPStatus.OK).json( {
+					"data_list" : docs_data , 'pagination' : { pages, total, before, next }
+				} );
+			});
+
 		} catch (err) {
 			return res.status(HTTPStatus.BAD_REQUEST).json({ msg : err});
 
