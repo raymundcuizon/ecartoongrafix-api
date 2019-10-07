@@ -204,6 +204,32 @@ const PortfolioController = () => {
 
 	};
 
+	const update = async (req, res) => {
+
+		try {
+
+			const { id } = req.params;
+			const { body } = req;
+
+			let data = {
+				'name': body.name,
+				'description': body.description
+			}
+
+			const portfolio = await Portfolio.update(data, {
+				where : {
+					id
+				}
+			});
+
+			return res.status(HTTPStatus.ACCEPTED).json({msg: 'successfully updated'})
+
+		} catch (e) {
+			return res.status(HTTPStatus.BAD_REQUEST).json(e);
+
+		}
+	};
+
 	const createArtwork = async (req, res) => {
 
 		try {
@@ -274,6 +300,7 @@ const PortfolioController = () => {
 		getArtworks,
 		getlist,
 		create,
+		update,
 		createArtwork
 	}
 
