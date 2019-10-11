@@ -1,5 +1,5 @@
 const development = {
-  database: 'ecartoonfix',
+  database: 'ecartoongrafix',
   username: 'root',
   password: 'root12345',
   host: 'localhost',

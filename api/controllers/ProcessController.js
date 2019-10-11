@@ -50,12 +50,12 @@ const ProcessController = () => {
 	const getlist = async (req, res, next) => {
 		try {
 
-			let images = await sequelize.query("SELECT process.slug, process.name, process.description,\
+			let datalist = await sequelize.query("SELECT process.id, process.slug, process.name, process.description,\
 			 	concat(images.folder_name ,'/', images.filename) as img_url \
 				FROM process LEFT JOIN images ON process.banner = images.id",
         {type: sequelize.QueryTypes.SELECT });
 
-			return res.status(HTTPStatus.OK).json( { images } );
+			return res.status(HTTPStatus.OK).json( { datalist } );
 		} catch (err) {
 			err.status = HTTPStatus.BAD_REQUEST;
 		    return next(err);
