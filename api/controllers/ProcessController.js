@@ -2,6 +2,7 @@ const HTTPStatus = require('http-status');
 const Images = require('../models/Images');
 const Process = require('../models/Process');
 const ProcessSteps = require('../models/ProcessSteps');
+const config = require('../../config/');
 
 const { Op } = require('sequelize');
 const sequelize = require('../../config/database');
@@ -34,7 +35,7 @@ const ProcessController = () => {
 
 
 			let images = await sequelize.query("SELECT ps.step, images.title, images.description,\
-					concat(images.folder_name ,'/', images.filename) as img_url \
+					concat('"+config.api_url+"','/process/',images.folder_name ,'/', images.filename) as img_url \
 					FROM process_steps as ps LEFT JOIN images ON ps.image_id = images.id\
 					where ps.status = 1 AND ps.deleted = 0 AND ps.process_id = ? order by ps.step",
         	{replacements: [ proc.id ],type: sequelize.QueryTypes.SELECT });
@@ -51,7 +52,7 @@ const ProcessController = () => {
 		try {
 
 			let datalist = await sequelize.query("SELECT process.id, process.slug, process.name, process.description,\
-			 	concat(images.folder_name ,'/', images.filename) as img_url \
+			 	concat('"+config.api_url+"','/process/',images.folder_name ,'/', images.filename) as img_url \
 				FROM process LEFT JOIN images ON process.banner = images.id",
         {type: sequelize.QueryTypes.SELECT });
 

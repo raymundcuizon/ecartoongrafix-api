@@ -6,6 +6,7 @@ const config = {
   privateRoutes,
   publicRoutes,
   port: process.env.PORT || '2017',
+  api_url : 'http://api.ecartoongrafix/media'
 };
 
 module.exports = config;

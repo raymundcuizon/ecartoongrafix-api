@@ -6,6 +6,8 @@ const PortfolioImages = require('../models/PortfolioImages');
 const ProcessSteps = require('../models/ProcessSteps');
 const Sequelize = require('sequelize');
 
+const config = require('../../config/');
+
 const { Op } = require('sequelize');
 const sequelize = require('../../config/database');
 
@@ -52,11 +54,10 @@ const PortfolioController = () => {
 								'title',
 								'description',
 								'id',
-								[ Sequelize.fn("concat", 'portfolio/',  Sequelize.col("folder_name"),'/',Sequelize.col("filename")), 'img_url' ]
+								[ Sequelize.fn("concat", config.api_url + 'portfolio/',  Sequelize.col("folder_name"),'/',Sequelize.col("filename")), 'img_url' ]
 							],
 							required: false
-						}
-					]
+						}					]
 			}
 
 			const { docs, pages, total } = await PortfolioImages.paginate(options)
@@ -100,7 +101,7 @@ const PortfolioController = () => {
 							model: Images,
 							litmi: 1,
 							attributes: [
-								[ Sequelize.fn("concat", 'portfolio/',  Sequelize.col("folder_name"),'/',Sequelize.col("filename")), 'img_url' ]
+								[ Sequelize.fn("concat", config.api_url + '/portfolio/',  Sequelize.col("folder_name"),'/',Sequelize.col("filename")), 'img_url' ]
 							],
 							required: false
 						}

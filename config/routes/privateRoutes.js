@@ -10,6 +10,7 @@ const privateRoutes = {
   'POST /process/step': 'ProcessController.createStep',
 
   'POST /portfolio': 'PortfolioController.create',
+  'PATCH /portfolio/:id': 'PortfolioController.update',
   'POST /portfolio/artwork': 'PortfolioController.createArtwork',
 
   'GET /portfolio': 'PortfolioController.getlist',
