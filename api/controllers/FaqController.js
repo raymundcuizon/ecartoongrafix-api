@@ -15,7 +15,8 @@ const FaqController = () => {
 			const data = await Faq.findAll({
 				attributes : [
 					'id', 'title', 'answer', 'question', 'status'
-				]
+				],
+				order : ['title']
 			})
 
 			return res.status(HTTPStatus.OK).json(data);
