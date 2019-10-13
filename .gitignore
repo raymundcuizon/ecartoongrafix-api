@@ -71,5 +71,5 @@ db/database.sqlite
 assets/images/process/*
 assets/images/portfolio/*
 assets/images/contact_us/*
-./config/connection.js
-./config/index.js
+config/connection.js
+config/index.js
