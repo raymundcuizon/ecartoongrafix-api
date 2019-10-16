@@ -30,7 +30,7 @@ const PortfolioController = () => {
 
 			const portfolio = await Portfolio.findOne({
             where: {
-                slug
+							[Sequelize.Op.or]: [{id: slug}, {slug: slug}]
             },
 						attributes: ['id','slug','name','description']
           });
@@ -46,7 +46,7 @@ const PortfolioController = () => {
 			const options = {
 					page: +page, // Default 1
 					paginate: +paginate, // Default 25
-					attributes: [ 'id', 'image_id' ],
+					attributes: [ 'id', 'image_id', 'status' ],
 					include: [
 						{
 							model: Images,
@@ -54,7 +54,7 @@ const PortfolioController = () => {
 								'title',
 								'description',
 								'id',
-								[ Sequelize.fn("concat", config.api_url + 'portfolio/',  Sequelize.col("folder_name"),'/',Sequelize.col("filename")), 'img_url' ]
+								[ Sequelize.fn("concat", config.api_url + '/portfolio/',  Sequelize.col("folder_name"),'/',Sequelize.col("filename")), 'img_url' ]
 							],
 							required: false
 						}					]
@@ -64,9 +64,35 @@ const PortfolioController = () => {
 			var before = page > 1 ? +page - 1 : 1;
 			var next   = page < total ? +page + 1 : total;
 
-			return res.status(HTTPStatus.OK).json( {
-				"data_list" : docs , 'pagination' : { pages, total, before, next }
-			} )
+			var docs_data = [];
+
+			var artwork = new Promise( (resolve, reject) => {
+					docs.forEach((value, index, array) => {
+
+						docs_data.push({
+							id: value.id,
+							image_id: value.Image.dataValues.id,
+							title: value.Image.dataValues.title,
+							description: value.Image.dataValues.description,
+							status: value.status,
+							img_url: value.Image.dataValues.img_url
+						})
+
+						if(index === array.length -1) {
+							resolve()
+						}
+					})
+			});
+
+			artwork.then(() => {
+				return res.status(HTTPStatus.OK).json( {
+					"data_list" : docs_data , 'pagination' : { pages, total, before, next }
+				} );
+			});
+
+			// return res.status(HTTPStatus.OK).json( {
+			// 	"data_list" : docs , 'pagination' : { pages, total, before, next }
+			// } )
 
 			// return res.status(HTTPStatus.OK).json( { portfolio_details: portfolio, images } );
 		} catch (err) {

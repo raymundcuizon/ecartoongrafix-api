@@ -48,6 +48,7 @@ app.use(function (req, res, next) {
 
 
 const server = http.Server(app);
+
 const mappedOpenRoutes = mapRoutes(config.publicRoutes, 'api/controllers/');
 const mappedAuthRoutes = mapRoutes(config.privateRoutes, 'api/controllers/');
 // const DB = dbService(environment, config.migrate).start();
@@ -74,7 +75,7 @@ app.use('/public', mappedOpenRoutes);
 app.use('/private', mappedAuthRoutes);
 
 
-server.listen(config.port, () => {
+server.listen(config.port, config.host, () => {
   if (environment !== 'production' &&
     environment !== 'development' &&
     environment !== 'testing'
