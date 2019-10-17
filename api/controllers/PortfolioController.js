@@ -47,8 +47,10 @@ const PortfolioController = () => {
 					page: +page, // Default 1
 					paginate: +paginate, // Default 25
 					attributes: [ 'id', 'image_id', 'status' ],
-					include: [
-						{
+					where : {
+						portfolio_id : portfolio.id
+					},
+					include: [{
 							model: Images,
 							attributes: [
 								'title',
@@ -57,12 +59,19 @@ const PortfolioController = () => {
 								[ Sequelize.fn("concat", config.api_url + '/portfolio/',  Sequelize.col("folder_name"),'/',Sequelize.col("filename")), 'img_url' ]
 							],
 							required: false
-						}					]
+					}],
 			}
 
 			const { docs, pages, total } = await PortfolioImages.paginate(options)
+
 			var before = page > 1 ? +page - 1 : 1;
 			var next   = page < total ? +page + 1 : total;
+
+			if(docs.length === 0) {
+				return res.status(HTTPStatus.OK).json( {
+					"data_list" : docs , 'pagination' : { pages, total, before, next }
+				} );
+			}
 
 			var docs_data = [];
 
