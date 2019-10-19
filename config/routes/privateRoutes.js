@@ -12,6 +12,7 @@ const privateRoutes = {
   'POST /portfolio': 'PortfolioController.create',
   'PATCH /portfolio/:id': 'PortfolioController.update',
   'POST /portfolio/artwork': 'PortfolioController.createArtwork',
+  'PATCH /portfolio/artwork/:id': 'PortfolioController.updateArtwork',
 
   'GET /portfolio': 'PortfolioController.getlist',
   'GET /portfolio/artwork/:slug': 'PortfolioController.getArtworks',
