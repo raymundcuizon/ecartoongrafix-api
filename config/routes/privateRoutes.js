@@ -7,6 +7,7 @@ const privateRoutes = {
   'PATCH /faq/visibility/:id': 'FaqController.visibility',
 
   'POST /process': 'ProcessController.create',
+  'PATCH /process/:id': 'ProcessController.update',
   'POST /process/step': 'ProcessController.createStep',
 
   'POST /portfolio': 'PortfolioController.create',

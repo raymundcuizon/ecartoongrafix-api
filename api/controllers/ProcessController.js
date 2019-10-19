@@ -253,11 +253,39 @@ const ProcessController = () => {
 		}
 	}
 
+	const update = async (req, res) => {
+
+		try {
+
+			const { id } = req.params;
+			const { body } = req;
+
+			let data = {
+				'name': body.name,
+				'description': body.description
+			}
+
+			const portfolio = await Process.update(data, {
+				where : {
+					id
+				}
+			});
+
+			return res.status(HTTPStatus.ACCEPTED).json({msg: 'successfully updated'})
+
+		} catch (e) {
+			return res.status(HTTPStatus.BAD_REQUEST).json(e);
+
+		}
+	};
+
+
 	return {
 		getSingle,
 		getlist,
 		create,
-		createStep
+		createStep,
+		update
 	}
 
 }
