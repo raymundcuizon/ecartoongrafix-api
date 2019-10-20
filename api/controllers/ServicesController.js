@@ -49,8 +49,8 @@ const ServicesController = () => {
 
 
 	return {
-		getlist,
-		update
+		getlist
+		, update
 	}
 }
 

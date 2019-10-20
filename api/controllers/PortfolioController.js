@@ -361,13 +361,58 @@ const PortfolioController = () => {
 		}
 	}
 
+	const visibility = async (req, res) => {
+
+		try {
+
+			const { id } = req.params;
+
+			const portfolio = await Portfolio.findByPk(id);
+
+			let status = (portfolio.status) ? false : true;
+
+			portfolio.update({ status });
+
+			return res.status(HTTPStatus.OK).json({ msg : 'successfully updated visibility'});
+
+		} catch (e) {
+			return res.status(HTTPStatus.BAD_REQUEST).json(e);
+
+		}
+
+	}
+
+	const visibilityArtwork = async (req, res) => {
+
+		try {
+
+			const { id } = req.params;
+
+			const portfolioImages = await PortfolioImages.findByPk(id);
+
+			let status = (portfolioImages.status) ? false : true;
+
+			portfolioImages.update({ status });
+
+			return res.status(HTTPStatus.OK).json({ msg : 'successfully updated visibility'});
+
+		} catch (e) {
+			return res.status(HTTPStatus.BAD_REQUEST).json(e);
+
+		}
+
+	}
+
 	return {
-		getArtworks,
-		getlist,
-		create,
-		update,
-		createArtwork,
-		updateArtwork
+		getArtworks
+		, getlist
+		, create
+		, update
+		, createArtwork
+		, updateArtwork
+		, visibility
+		, visibilityArtwork
+
 	}
 
 }

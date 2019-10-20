@@ -89,8 +89,8 @@ const ImageController = () => {
 	};
 
 	return {
-		getlist,
-		create
+		getlist
+		, create
 	}
 }
 

@@ -166,9 +166,9 @@ const InquiryController = () => {
 	};
 
 	return {
-		getlist,
-		create,
-		get
+		getlist
+		, create
+		, get
 	}
 }
 

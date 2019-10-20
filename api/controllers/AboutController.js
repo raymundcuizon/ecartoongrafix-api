@@ -48,8 +48,8 @@ const AboutController = () => {
 
 
 	return {
-		getlist,
-		update
+		getlist
+		, update
 	}
 }
 

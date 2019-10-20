@@ -87,10 +87,10 @@ const UserController = () => {
 
 
   return {
-    register,
-    login,
-    validate,
-    getAll,
+    register
+    , login
+    , validate
+    , getAll
   };
 };
 

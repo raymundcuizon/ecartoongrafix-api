@@ -116,11 +116,11 @@ const FaqController = () => {
 	}
 
 	return {
-		getlist,
-		create,
-		update,
-		destroy,
-		visibility
+		getlist
+		, create
+		, update
+		, destroy
+		, visibility
 	}
 }
 

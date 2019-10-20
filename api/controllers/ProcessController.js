@@ -4,8 +4,8 @@ const Process = require('../models/Process');
 const ProcessSteps = require('../models/ProcessSteps');
 const config = require('../../config/');
 
-const { Op } = require('sequelize');
 const sequelize = require('../../config/database');
+const Sequelize = require('sequelize');
 
 const fs = require('fs-extra');
 const random = require('random-string-generator');
@@ -22,25 +22,25 @@ const ProcessController = () => {
 
 			const { slug } = req.params;
 
-			const proc = await Process.findOne({
+			const process = await Process.findOne({
             where: {
-                slug
+							[Sequelize.Op.or]: [{id: slug}, {slug: slug}]
             },
 						attributes: ['id','slug','name','description']
           });
 
-      if(!proc) {
+      if(!process) {
       		return res.status(400).json({ msg: 'Bad Request: Model not found' });
       }
 
 
-			let images = await sequelize.query("SELECT ps.step, images.title, images.description,\
+			let steps = await sequelize.query("SELECT ps.step, images.title, images.description,\
 					concat('"+config.api_url+"','/process/',images.folder_name ,'/', images.filename) as img_url \
 					FROM process_steps as ps LEFT JOIN images ON ps.image_id = images.id\
 					where ps.status = 1 AND ps.deleted = 0 AND ps.process_id = ? order by ps.step",
-        	{replacements: [ proc.id ],type: sequelize.QueryTypes.SELECT });
+        	{replacements: [ process.id ],type: sequelize.QueryTypes.SELECT });
 
-			return res.status(HTTPStatus.OK).json( { proccess: proc, images } );
+			return res.status(HTTPStatus.OK).json( { process, steps } );
 		} catch (err) {
 			return res.status(HTTPStatus.BAD_REQUEST).json({ msg: 'invalid request' });
 
@@ -279,13 +279,57 @@ const ProcessController = () => {
 		}
 	};
 
+	const visibility = async (req, res) => {
+
+		try {
+
+			const { id } = req.params;
+
+			const process = await Process.findByPk(id);
+
+			let status = (process.status) ? false : true;
+
+			process.update({ status });
+
+			return res.status(HTTPStatus.OK).json({ msg : 'successfully updated visibility'});
+
+		} catch (e) {
+			return res.status(HTTPStatus.BAD_REQUEST).json(e);
+
+		}
+
+	}
+
+	const visibilityStep = async (req, res) => {
+
+		try {
+
+			const { id } = req.params;
+
+			const processStep = await ProcessSteps.findByPk(id);
+
+			let status = (processStep.status) ? false : true;
+
+			processStep.update({ status });
+
+			return res.status(HTTPStatus.OK).json({ msg : 'successfully updated visibility'});
+
+		} catch (e) {
+			return res.status(HTTPStatus.BAD_REQUEST).json(e);
+
+		}
+
+	}
+
 
 	return {
-		getSingle,
-		getlist,
-		create,
-		createStep,
-		update
+		getSingle
+		, getlist
+		, create
+		, createStep
+		, update
+		, visibility
+		, visibilityStep
 	}
 
 }
