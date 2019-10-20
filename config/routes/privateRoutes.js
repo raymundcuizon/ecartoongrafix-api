@@ -12,7 +12,6 @@ const privateRoutes = {
   'PATCH /process/visibility/:id': 'ProcessController.visibility',
   'PATCH /process/step/visibility/:id': 'ProcessController.visibilityStep',
 
-
   'POST /portfolio': 'PortfolioController.create',
   'PATCH /portfolio/:id': 'PortfolioController.update',
   'POST /portfolio/artwork': 'PortfolioController.createArtwork',
