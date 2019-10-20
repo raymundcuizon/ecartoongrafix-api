@@ -23,6 +23,7 @@ const privateRoutes = {
   'GET /portfolio/artwork/:slug': 'PortfolioController.getArtworks',
 
   'GET /inquiries': 'InquiryController.getlist',
+  'PATCH /inquiries/mark-as-read/:id': 'InquiryController.markAsRead',
   'GET /inquiry/:id': 'InquiryController.get',
 
   'PATCH /about': 'AboutController.update',

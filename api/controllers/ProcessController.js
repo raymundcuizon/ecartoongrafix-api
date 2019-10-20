@@ -53,7 +53,7 @@ const ProcessController = () => {
 
 			let datalist = await sequelize.query("SELECT process.id, process.status, process.slug, process.name, process.description,\
 			 	concat('"+config.api_url+"','/process/',images.folder_name ,'/', images.filename) as img_url \
-				FROM process LEFT JOIN images ON process.banner = images.id",
+				FROM process LEFT JOIN images ON process.banner = images.id ORDER BY process.id desc",
         {type: sequelize.QueryTypes.SELECT });
 
 			return res.status(HTTPStatus.OK).json( { datalist } );

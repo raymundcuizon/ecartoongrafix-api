@@ -165,10 +165,30 @@ const InquiryController = () => {
 		}
 	};
 
+	const markAsRead = async (req, res) => {
+		try {
+
+			const { id } = req.params;
+
+			const read = await ContactUs.findByPk(id);
+
+			const status = 2;
+
+			read.update({ status });
+
+			return res.status(HTTPStatus.OK).json({ msg : 'successfully updated visibility'});
+
+		} catch (e) {
+			return res.status(HTTPStatus.BAD_REQUEST).json(e);
+
+		}
+	}
+
 	return {
 		getlist
 		, create
 		, get
+		, markAsRead
 	}
 }
 
