@@ -39,6 +39,9 @@ const ProcessSteps = sequelize.define('ProcessSteps', {
       allowNull: false,
       defaultValue: true
   },
+  sequence: {
+      type: Sequelize.INTEGER
+  },
   deleted: {
       type: Sequelize.BOOLEAN,
       allowNull: false,

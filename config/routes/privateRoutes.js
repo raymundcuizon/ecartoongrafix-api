@@ -8,6 +8,7 @@ const privateRoutes = {
 
   'POST /process': 'ProcessController.create',
   'PATCH /process/:id': 'ProcessController.update',
+  'PATCH /process/:id/sequence': 'ProcessController.stepSequence',
   'POST /process/step': 'ProcessController.createStep',
   'PATCH /process/visibility/:id': 'ProcessController.visibility',
   'PATCH /process/step/visibility/:id': 'ProcessController.visibilityStep',

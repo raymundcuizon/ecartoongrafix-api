@@ -253,6 +253,40 @@ const ProcessController = () => {
 		}
 	}
 
+
+	const stepSequence = async (req, res) => {
+
+		var transaction;
+
+		try {
+			const { body } = req;
+			
+			transaction = await sequelize.transaction();
+
+			body.forEach( async (value, index, array) => {
+
+				const portfolio = await ProcessSteps.update( { sequence : value.sequence }, {
+					where : {
+						id : value.id
+					}
+				}, {
+					transaction
+				});
+			})
+
+			await transaction.commit();
+
+			return res.status(HTTPStatus.OK).json({ msg : ' sequence successfully updated' });
+		} catch (e) {
+			console.log(e);
+		 if (transaction) await transaction.rollback();
+		 return res.status(HTTPStatus.BAD_REQUEST).json(e);
+		}
+
+
+	}
+
+
 	const update = async (req, res) => {
 
 		try {
@@ -330,6 +364,7 @@ const ProcessController = () => {
 		, update
 		, visibility
 		, visibilityStep
+		, stepSequence
 	}
 
 }

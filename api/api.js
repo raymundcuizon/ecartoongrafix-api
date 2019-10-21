@@ -68,7 +68,7 @@ app.use(helmet({
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-app.all('/private/*', (req, res, next) => auth(req, res, next));
+// app.all('/private/*', (req, res, next) => auth(req, res, next));
 
 // fill routes for express application
 app.use('/public', mappedOpenRoutes);

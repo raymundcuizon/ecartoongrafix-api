@@ -10,6 +10,7 @@ const { Op } = require('sequelize');
 const FaqController = () => {
 
 	const getlist = async (req, res, next) => {
+
 		try {
 
 			const data = await Faq.findAll({
