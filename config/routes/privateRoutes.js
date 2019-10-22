@@ -6,6 +6,7 @@ const privateRoutes = {
   'PATCH /faq/:id': 'FaqController.update',
   'PATCH /faq/visibility/:id': 'FaqController.visibility',
 
+  'GET /process': 'ProcessController.getlistPrivate',
   'POST /process': 'ProcessController.create',
   'PATCH /process/:id': 'ProcessController.update',
   'PATCH /process/:id/sequence': 'ProcessController.stepSequence',

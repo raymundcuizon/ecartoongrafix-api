@@ -13,7 +13,7 @@ const _ = require('underscore');
 const lodash = require('lodash');
 const slugify = require('slugify')
 
-
+const utils = require('../services/utils.service');
 const ProcessController = () => {
 
 	const getSingle = async (req, res) => {
@@ -34,7 +34,7 @@ const ProcessController = () => {
       }
 
 
-			let steps = await sequelize.query("SELECT ps.step, ps.status, images.title, images.description,\
+			let steps = await sequelize.query("SELECT ps.id, ps.step, ps.status, images.title, images.description,\
 					concat('"+config.api_url+"','/process/',images.folder_name ,'/', images.filename) as img_url \
 					FROM process_steps as ps LEFT JOIN images ON ps.image_id = images.id\
 					where ps.status = 1 AND ps.deleted = 0 AND ps.process_id = ? order by ps.step",
@@ -57,6 +57,28 @@ const ProcessController = () => {
         {type: sequelize.QueryTypes.SELECT });
 
 			return res.status(HTTPStatus.OK).json( { datalist } );
+		} catch (err) {
+			err.status = HTTPStatus.BAD_REQUEST;
+		    return next(err);
+		}
+	};
+
+	const getlistPrivate = async (req, res, next) => {
+
+		try {
+
+			let condition = `SELECT process.id, process.status, process.slug, process.name, process.description,
+			concat('${config.api_url}','/process/',images.folder_name ,'/', images.filename) as img_url
+			FROM process LEFT JOIN images ON process.banner = images.id  where process.status = ? ORDER BY process.sequence asc
+			`;
+			let visible = await sequelize.query(condition,
+        {replacements: [1], type: sequelize.QueryTypes.SELECT });
+
+			let inVisible = await sequelize.query(condition,
+				{replacements: [0], type: sequelize.QueryTypes.SELECT });
+
+
+			return res.status(HTTPStatus.OK).json( { visible, inVisible } );
 		} catch (err) {
 			err.status = HTTPStatus.BAD_REQUEST;
 		    return next(err);
@@ -253,39 +275,11 @@ const ProcessController = () => {
 		}
 	}
 
-
 	const stepSequence = async (req, res) => {
 
-		var transaction;
-
-		try {
-			const { body } = req;
-			
-			transaction = await sequelize.transaction();
-
-			body.forEach( async (value, index, array) => {
-
-				const portfolio = await ProcessSteps.update( { sequence : value.sequence }, {
-					where : {
-						id : value.id
-					}
-				}, {
-					transaction
-				});
-			})
-
-			await transaction.commit();
-
-			return res.status(HTTPStatus.OK).json({ msg : ' sequence successfully updated' });
-		} catch (e) {
-			console.log(e);
-		 if (transaction) await transaction.rollback();
-		 return res.status(HTTPStatus.BAD_REQUEST).json(e);
-		}
-
+		utils.sequence(req, res, ProcessSteps);
 
 	}
-
 
 	const update = async (req, res) => {
 
@@ -315,43 +309,13 @@ const ProcessController = () => {
 
 	const visibility = async (req, res) => {
 
-		try {
-
-			const { id } = req.params;
-
-			const process = await Process.findByPk(id);
-
-			let status = (process.status) ? false : true;
-
-			process.update({ status });
-
-			return res.status(HTTPStatus.OK).json({ msg : 'successfully updated visibility'});
-
-		} catch (e) {
-			return res.status(HTTPStatus.BAD_REQUEST).json(e);
-
-		}
+		utils.visibility(req, res, Process);
 
 	}
 
 	const visibilityStep = async (req, res) => {
 
-		try {
-
-			const { id } = req.params;
-
-			const processStep = await ProcessSteps.findByPk(id);
-
-			let status = (processStep.status) ? false : true;
-
-			processStep.update({ status });
-
-			return res.status(HTTPStatus.OK).json({ msg : 'successfully updated visibility'});
-
-		} catch (e) {
-			return res.status(HTTPStatus.BAD_REQUEST).json(e);
-
-		}
+		utils.visibility(req, res, ProcessSteps);
 
 	}
 
@@ -365,6 +329,7 @@ const ProcessController = () => {
 		, visibility
 		, visibilityStep
 		, stepSequence
+		, getlistPrivate
 	}
 
 }

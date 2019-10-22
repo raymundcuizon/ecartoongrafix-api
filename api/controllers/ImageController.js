@@ -5,6 +5,7 @@ const sequelize = require('../../config/database');
 
 const fs = require('fs-extra');
 const random = require('random-string-generator');
+const utils = require('../services/utils.service');
 
 const ImageController = () => {
 

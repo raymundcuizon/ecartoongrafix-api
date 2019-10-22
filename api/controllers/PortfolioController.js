@@ -17,7 +17,9 @@ const _ = require('underscore');
 const lodash = require('lodash');
 const slugify = require('slugify')
 
-const image_file_path  = require('../../config/constant')
+const image_file_path  = require('../../config/constant');
+const utils = require('../services/utils.service');
+
 
 const PortfolioController = () => {
 
@@ -363,43 +365,13 @@ const PortfolioController = () => {
 
 	const visibility = async (req, res) => {
 
-		try {
-
-			const { id } = req.params;
-
-			const portfolio = await Portfolio.findByPk(id);
-
-			let status = (portfolio.status) ? false : true;
-
-			portfolio.update({ status });
-
-			return res.status(HTTPStatus.OK).json({ msg : 'successfully updated visibility'});
-
-		} catch (e) {
-			return res.status(HTTPStatus.BAD_REQUEST).json(e);
-
-		}
+		utils.visibility(req, res, Portfolio);
 
 	}
 
 	const visibilityArtwork = async (req, res) => {
 
-		try {
-
-			const { id } = req.params;
-
-			const portfolioImages = await PortfolioImages.findByPk(id);
-
-			let status = (portfolioImages.status) ? false : true;
-
-			portfolioImages.update({ status });
-
-			return res.status(HTTPStatus.OK).json({ msg : 'successfully updated visibility'});
-
-		} catch (e) {
-			return res.status(HTTPStatus.BAD_REQUEST).json(e);
-
-		}
+		utils.visibility(req, res, PortfolioImages);
 
 	}
 

@@ -1,11 +1,8 @@
-/**
- * Post Controller
- */
-
 
 const HTTPStatus = require('http-status');
 const Faq = require('../models/Faq');
 const { Op } = require('sequelize');
+const utils = require('../services/utils.service');
 
 const FaqController = () => {
 
@@ -98,22 +95,9 @@ const FaqController = () => {
 	}
 
 	const visibility = async (req, res) => {
-		try {
 
-			const { id } = req.params;
+		utils.visibility(req, res, Faq);
 
-			const faq = await Faq.findByPk(id);
-
-			let status = (faq.status) ? false : true;
-
-			faq.update({ status });
-
-			return res.status(HTTPStatus.OK).json({ msg : 'successfully updated visibility'});
-
-		} catch (e) {
-			return res.status(HTTPStatus.BAD_REQUEST).json(e);
-
-		}
 	}
 
 	return {
