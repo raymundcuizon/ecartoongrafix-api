@@ -8,6 +8,7 @@ const privateRoutes = {
 
   'GET /process': 'ProcessController.getlistPrivate',
   'POST /process': 'ProcessController.create',
+  'PATCH /process/sequence': 'ProcessController.processSequence',
   'PATCH /process/:id': 'ProcessController.update',
   'PATCH /process/:id/sequence': 'ProcessController.stepSequence',
   'POST /process/step': 'ProcessController.createStep',

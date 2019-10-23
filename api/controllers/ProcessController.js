@@ -281,6 +281,12 @@ const ProcessController = () => {
 
 	}
 
+	const processSequence = async (req, res) => {
+
+		utils.sequence(req, res, Process);
+
+	}
+
 	const update = async (req, res) => {
 
 		try {
@@ -330,6 +336,7 @@ const ProcessController = () => {
 		, visibilityStep
 		, stepSequence
 		, getlistPrivate
+		, processSequence
 	}
 
 }

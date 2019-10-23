@@ -14,7 +14,7 @@ var utils = {
 
         body.forEach( async (value, index, array) => {
 
-          const portfolio = await model.update( { sequence : value.sequence }, {
+          const portfolio = await model.update( { sequence : value.sequence, status : value.status }, {
             where : {
               id : value.id
             }

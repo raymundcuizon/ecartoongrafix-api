@@ -45,6 +45,9 @@ const Process = sequelize.define('Process', {
       allowNull: false,
       defaultValue: true
   },
+  sequence: {
+      type: Sequelize.INTEGER
+  },
   created_at : {
       type :  Sequelize.DATE
   },
