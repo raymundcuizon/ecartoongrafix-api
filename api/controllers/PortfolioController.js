@@ -27,6 +27,10 @@ const PortfolioController = () => {
 
 		try {
 
+			Portfolio.belongsTo(Images, {
+				foreignKey: 'thumbnail'
+			});
+
 			const { slug } = req.params;
 			const { page , paginate } = req.query;
 
@@ -34,7 +38,14 @@ const PortfolioController = () => {
             where: {
 							[Sequelize.Op.or]: [{id: slug}, {slug: slug}]
             },
-						attributes: ['id','slug','name','description']
+						attributes: ['id','slug','name','description'],
+						include: [{
+								model: Images,
+								attributes: [
+									[ Sequelize.fn("concat", config.api_url + '/portfolio/',  Sequelize.col("folder_name"),'/',Sequelize.col("filename")), 'img_url' ]
+								],
+								required: false
+						}],
           });
 
       if(!portfolio) {
