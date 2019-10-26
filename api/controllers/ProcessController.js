@@ -61,7 +61,7 @@ const ProcessController = () => {
 						, concat('${config.api_url}','/process/',images.folder_name ,'/', images.filename) as img_url
 						FROM process LEFT JOIN images ON process.banner = images.id WHERE process.status = 1 ORDER BY process.sequence ASC
 				`,
-        {type: sequelize.QueryTypes.SELECT });
+        { type: sequelize.QueryTypes.SELECT });
 
 			return res.status(HTTPStatus.OK).json( { datalist } );
 		} catch (err) {

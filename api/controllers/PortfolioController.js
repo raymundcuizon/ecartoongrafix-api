@@ -100,7 +100,7 @@ const PortfolioController = () => {
 			});
 
 			artwork.then(() => {
-				return res.status(HTTPStatus.OK).json( {
+				return res.status(HTTPStatus.OK).json( {portfolio,
 					"data_list" : docs_data , 'pagination' : { pages, total, before, next }
 				} );
 			});
