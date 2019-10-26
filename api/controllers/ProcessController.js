@@ -40,7 +40,7 @@ const ProcessController = () => {
 					where ps.status = 1 AND ps.deleted = 0 AND ps.process_id = ? order by ps.step",
         	{replacements: [ process.id ],type: sequelize.QueryTypes.SELECT });
 
-			return res.status(HTTPStatus.OK).json( { process, steps } );
+			return res.status(HTTPStatus.OK).json( {steps} );
 		} catch (err) {
 			return res.status(HTTPStatus.BAD_REQUEST).json({ msg: 'invalid request' });
 
@@ -51,9 +51,16 @@ const ProcessController = () => {
 	const getlist = async (req, res, next) => {
 		try {
 
-			let datalist = await sequelize.query("SELECT process.id, process.status, process.slug, process.name, process.description,\
-			 	concat('"+config.api_url+"','/process/',images.folder_name ,'/', images.filename) as img_url \
-				FROM process LEFT JOIN images ON process.banner = images.id ORDER BY process.id desc",
+			let datalist = await sequelize.query(`
+					SELECT process.id
+						, process.status
+						, process.slug
+						, process.name
+						, process.description
+						, process.sequence
+						, concat('${config.api_url}','/process/',images.folder_name ,'/', images.filename) as img_url
+						FROM process LEFT JOIN images ON process.banner = images.id WHERE process.status = 1 ORDER BY process.sequence ASC
+				`,
         {type: sequelize.QueryTypes.SELECT });
 
 			return res.status(HTTPStatus.OK).json( { datalist } );
