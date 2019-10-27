@@ -63,7 +63,45 @@ const ProcessController = () => {
 				`,
         { type: sequelize.QueryTypes.SELECT });
 
-			return res.status(HTTPStatus.OK).json( { datalist } );
+				var docs_data = [];
+
+				var result = new Promise((resolve, reject) => {
+					datalist.forEach( async (value,index, array) => {
+						const steps = await sequelize.query(`
+							SELECT ps.id
+								, ps.step
+								, ps.status
+								, images.title
+								, images.description
+								, concat('${config.api_url}','/process/',images.folder_name ,'/', images.filename) as img_url
+								FROM process_steps as ps LEFT JOIN images ON ps.image_id = images.id
+								WHERE ps.status = 1 AND ps.deleted = 0 AND ps.process_id = ? order by ps.step
+							`, {replacements: [ value.id ],type: sequelize.QueryTypes.SELECT });
+
+
+							docs_data.push({
+								id : value.id,
+								status : value.status,
+								slug : value.slug,
+								name : value.name,
+								description : value.description,
+								sequence : value.sequence,
+								img_url : value.img_url,
+								steps : steps
+							})
+
+							if(index === array.length -1) {
+								resolve()
+							}
+
+					})
+				})
+
+				result.then(() => {
+					return res.status(HTTPStatus.OK).json( { datalist : docs_data } );
+
+				});
+
 		} catch (err) {
 			err.status = HTTPStatus.BAD_REQUEST;
 		    return next(err);
