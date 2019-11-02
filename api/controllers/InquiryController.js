@@ -50,29 +50,30 @@ const InquiryController = () => {
 
 			var reference_photos = [];
 			let data = {
-				contact_name : body.contact_name,
-				company_name : body.company_name,
-				phone_number : body.phone_number,
-				website : body.website,
-				project_name : body.project_name,
-				license : body.license,
-				illustration_usage : body.illustration_usage,
-				client_type : body.client_type,
-				final_graphic : body.final_graphic,
-				deadline : body.deadline,
-				project_about : body.project_about,
-				cps_background : body.cps_background,
-				budget : body.budget,
-				project_usage : body.project_usage,
-				targe_audience : body.targe_audience,
-				colors : body.colors,
-				look_feel : body.look_feel,
-				font_lettering : body.font_lettering,
-				etc : body.etc,
-				// reference_photos : reference_photos,
+				contact_name : body.contact_name
+				, company_name : body.company_name
+				, phone_number : body.phone_number
+				, website : body.website
+				, email_address : body.email_address
+				, project_name : body.project_name
+				, license : body.license
+				, illustration_usage : body.illustration_usage
+				, client_type : body.client_type
+				, final_graphic_print : body.final_graphic_print
+				, final_graphic_web : body.final_graphic_web
+				, final_graphic_apparel : body.final_graphic_apparel
+				, final_graphic_other : body.final_graphic_other
+				, project_about : body.project_about
+				, cps_background : body.cps_background
+				, project_usage : body.project_usage
+				, target_audience : body.target_audience
+				, colors : body.colors
+				, look_feel : body.look_feel
+				, positioning : body.positioning
+				, font_lettering : body.font_lettering
+				, etc : body.etc
 			}
 			if (!files || Object.keys(files).length === 0) {
-				// return res.status(HTTPStatus.BAD_REQUEST).json({ msg : 'No files were uploaded.'});
 				reference_photos = null
 				data.reference_photos = reference_photos;
 				const contact_us = await ContactUs.create(data);

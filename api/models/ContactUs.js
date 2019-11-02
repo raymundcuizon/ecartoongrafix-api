@@ -16,6 +16,14 @@ const hooks = {
 
 const tableName = 'contact_us';
 
+// email_address *
+// final_graphic_print *
+// final_graphic_web *
+// final_graphic_apparel *
+// final_graphic_other *
+// target_audience *
+// positioning *
+
 const ContactUs = sequelize.define('contact_us', {
   id : {
       type :  Sequelize.INTEGER,
@@ -47,9 +55,6 @@ const ContactUs = sequelize.define('contact_us', {
   client_type: {
       type: Sequelize.STRING
   },
-  final_graphic: {
-      type: Sequelize.STRING
-  },
   deadline: {
       type: Sequelize.STRING
   },
@@ -65,9 +70,6 @@ const ContactUs = sequelize.define('contact_us', {
   project_usage: {
       type: Sequelize.TEXT
   },
-  targe_audience: {
-      type: Sequelize.TEXT
-  },
   colors: {
       type: Sequelize.TEXT
   },
@@ -79,6 +81,27 @@ const ContactUs = sequelize.define('contact_us', {
   },
   etc: {
       type: Sequelize.TEXT
+  },
+  email_address : {
+      type: Sequelize.STRING
+  },
+  final_graphic_print : {
+      type: Sequelize.STRING
+  },
+  final_graphic_web : {
+      type: Sequelize.STRING
+  },
+  final_graphic_apparel : {
+      type: Sequelize.STRING
+  },
+  final_graphic_other : {
+      type: Sequelize.STRING
+  },
+  target_audience : {
+      type: Sequelize.TEXT
+  },
+  positioning : {
+      type: Sequelize.STRING
   },
   reference_photos: {
       type: Sequelize.STRING
