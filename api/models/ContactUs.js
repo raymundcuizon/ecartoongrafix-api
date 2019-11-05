@@ -52,10 +52,16 @@ const ContactUs = sequelize.define('contact_us', {
   illustration_usage: {
       type: Sequelize.STRING
   },
+  illustration_usage_other: {
+      type: Sequelize.STRING
+  },
   client_type: {
       type: Sequelize.STRING
   },
   deadline: {
+      type: Sequelize.STRING
+  },
+  deadline_other: {
       type: Sequelize.STRING
   },
   project_about: {
@@ -95,6 +101,9 @@ const ContactUs = sequelize.define('contact_us', {
       type: Sequelize.STRING
   },
   final_graphic_other : {
+      type: Sequelize.STRING
+  },
+  final_graphic_other_details : {
       type: Sequelize.STRING
   },
   target_audience : {

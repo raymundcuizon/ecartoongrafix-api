@@ -58,11 +58,16 @@ const InquiryController = () => {
 				, project_name : body.project_name
 				, license : body.license
 				, illustration_usage : body.illustration_usage
+				, illustration_usage_other : body.illustration_usage_other
 				, client_type : body.client_type
 				, final_graphic_print : body.final_graphic_print
 				, final_graphic_web : body.final_graphic_web
 				, final_graphic_apparel : body.final_graphic_apparel
 				, final_graphic_other : body.final_graphic_other
+				, final_graphic_other_details : body.final_graphic_other_details
+				, deadline : body.deadline
+				, deadline_other: body.deadline_other
+				, budget : body.budget
 				, project_about : body.project_about
 				, cps_background : body.cps_background
 				, project_usage : body.project_usage
